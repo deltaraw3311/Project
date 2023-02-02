@@ -1,4 +1,4 @@
-package net.javaguides.controller;
+package net.javaguides.springboot.controller;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.javaguides.exception.ResourceNotFoundException;
-import net.javaguides.model.JobPosting;
-import net.javaguides.repository.JobPostingRepository;
+import net.javaguides.springboot.exception.ResourceNotFoundException;
+import net.javaguides.springboot.model.JobPosting;
+import net.javaguides.springboot.repository.JobPostingRepository;
 
 @RestController
 @RequestMapping("/api/job-postings")
@@ -38,14 +38,26 @@ public class JobPostingController {
 
     @GetMapping("/{id}")
     public JobPosting getJobPostingById(@PathVariable Long id) {
-        return jobPostingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+        try {
+			return jobPostingRepository.findById(id)
+			        .orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+		} catch (ResourceNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
     }
 
     @PutMapping("/{id}")
-    public JobPosting updateJobPosting(@PathVariable Long id,  @RequestBody JobPosting jobPostingDetails) {
-        JobPosting jobPosting = jobPostingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+    public JobPosting updateJobPosting(@PathVariable Long id, @RequestBody JobPosting jobPostingDetails) {
+        JobPosting jobPosting = null;
+		try {
+			jobPosting = jobPostingRepository.findById(id)
+			        .orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+		} catch (ResourceNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         jobPosting.setTitle(jobPostingDetails.getTitle());
         jobPosting.setDescription(jobPostingDetails.getDescription());
@@ -59,8 +71,14 @@ public class JobPostingController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteJobPosting(@PathVariable Long id) {
-        JobPosting jobPosting = jobPostingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+        JobPosting jobPosting = null;
+		try {
+			jobPosting = jobPostingRepository.findById(id)
+			        .orElseThrow(() -> new ResourceNotFoundException("NOT_FOUND"));
+		} catch (ResourceNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         jobPostingRepository.delete(jobPosting);
         return ResponseEntity.ok().build();
